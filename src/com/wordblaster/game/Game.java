@@ -1,5 +1,6 @@
 package com.wordblaster.game.gametypes;
 
+import com.wordblaster.game.GameSettings;
 import com.wordblaster.game.Word;
 
 import java.util.List;
