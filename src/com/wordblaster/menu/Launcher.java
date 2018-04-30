@@ -1,7 +1,10 @@
 package com.wordblaster.menu;
 
-import com.wordblaster.game.gametypes.Game;
+import com.wordblaster.game.Game;
+import com.wordblaster.game.GameSettings;
 import com.wordblaster.game.gametypes.StandardGame;
+import com.wordblaster.persistance.SettingsReader;
+import com.wordblaster.renderer.DisplaySettings;
 import com.wordblaster.renderer.GameRenderer;
 
 import javax.swing.*;
@@ -11,6 +14,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -26,10 +32,21 @@ public class Launcher {
     private JTextField libaryCustomPathTF = new JTextField("", 20);
     private JButton libaryCustomPathButton = new JButton("...");
     private String selectedLibaryFilePath;
+    private DisplaySettings displaySettings;
+    private GameSettings gameSettings;
 
     private String libariesFolder = "resources/libaries";
 
     public Launcher() {
+        try {
+            initializeComponents();
+            initializeSettings();
+        } catch (Exception e) {
+            System.err.print(e.getStackTrace());
+        }
+    }
+
+    private void initializeComponents() {
         frame = new JFrame("Word Blaster");
         JPanel panel = (JPanel) frame.getContentPane();
         panel.setPreferredSize(new Dimension(700, 60));
@@ -61,6 +78,33 @@ public class Launcher {
         frame.setVisible(true);
     }
 
+    private void initializeSettings() throws IOException {
+        initializeDisplaySettings();
+        initializeGameSettings();
+    }
+
+    private void initializeDisplaySettings() throws  IOException {
+        File displaySettingsFile = new File("displaySettings");
+        if (displaySettingsFile.exists()) {
+            this.displaySettings = SettingsReader.readDisplaySettings(displaySettingsFile);
+        } else {
+            Files.copy(new File("resources/defaultSettings/displaySettings").toPath(),
+                    displaySettingsFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            initializeDisplaySettings();
+        }
+    }
+
+    private void initializeGameSettings() throws IOException {
+        File gameSettingsFile = new File("gameSettings");
+        if (gameSettingsFile.exists()) {
+            this.gameSettings = SettingsReader.readGameSettings(gameSettingsFile);
+        } else {
+            Files.copy(new File("resources/defaultSettings/gameSettings").toPath(),
+                    gameSettingsFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            initializeGameSettings();
+        }
+    }
+
     private void fillLibaryComboBox() {
         File libaryFolder = new File(libariesFolder);
         for (File f : libaryFolder.listFiles()) {
@@ -89,8 +133,8 @@ public class Launcher {
             }
             try {
                 String[] words = readWordLibary(selectedLibary);
-                Game game = new StandardGame(words, 10);
-                GameRenderer gameRenderer = new GameRenderer(game,1200,600);
+                Game game = new StandardGame(words, gameSettings);
+                GameRenderer gameRenderer = new GameRenderer(game, displaySettings);
                 new Thread(gameRenderer).start();
                 frame.dispose();
             } catch (Exception e) {

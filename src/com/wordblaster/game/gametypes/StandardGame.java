@@ -1,5 +1,7 @@
 package com.wordblaster.game.gametypes;
 
+import com.wordblaster.game.Game;
+import com.wordblaster.game.GameSettings;
 import com.wordblaster.game.Word;
 
 import java.util.ArrayList;
@@ -14,32 +16,38 @@ public class StandardGame implements Game {
     private List<Word> deadWords = new ArrayList<Word>();;
     private int misses = 0;
     private int score = 0;
-    private long spawnDelay= 1500;
+    private int spawnDelay;
     private long lastSpawnTime = System.currentTimeMillis();
     private double prevoisHorizontalLocation;
+    private int spawnDelayReduction;
+    private int minimalSpawnDelay;
+    private double spawnXMin, spawnXMax;
 
-    public StandardGame(String[] words, int maxFaults) {
+    public StandardGame(String[] words, GameSettings gameSettings) {
         this.words = words;
-        this.maxMisses = maxFaults;
+        this.maxMisses = gameSettings.getMaxMisses();
+        this.spawnDelay = gameSettings.getInitialSpawnDelay();
+        this.spawnDelayReduction = gameSettings.getSpawnDelayReduction();
+        this.minimalSpawnDelay = gameSettings.getMinimalSpawnDelay();
+        this.spawnXMin = gameSettings.getSpawnXMin();
+        this.spawnXMax = gameSettings.getSpawnXMax();
     }
 
     public void maybeSpawnNewWord() {
         if ((System.currentTimeMillis() - lastSpawnTime) >= spawnDelay) {
             Random r = new Random();
             int randIndex = r.nextInt(words.length);
-            double rangeMin, rangeMax, randPos;
+            double randPos;
             do {
-                rangeMin = 0.15;
-                rangeMax = 0.85;
-                randPos = rangeMin + (rangeMax - rangeMin) * r.nextDouble(); // Random double between 0.2 and 0.8 for horizontal position
+                randPos = spawnXMin + (spawnXMax - spawnXMin) * r.nextDouble(); // Random double between 0.2 and 0.8 for horizontal position
             } while (!((prevoisHorizontalLocation - 0.3) <= randPos)
                         &&  !(randPos <= (prevoisHorizontalLocation + 0.3)));  // To avoid word overlapping
             Word w = new Word(words[randIndex], randPos);
             spawnedWords.add(w);
             lastSpawnTime = System.currentTimeMillis();
             prevoisHorizontalLocation = randPos;
-            if (spawnDelay >= 1)
-                spawnDelay -= 1;
+            if (spawnDelay >= minimalSpawnDelay)
+                spawnDelay -= spawnDelayReduction;
         }
     }
 

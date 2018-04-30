@@ -1,4 +1,4 @@
-package com.wordblaster.game.gametypes;
+package com.wordblaster.game;
 
 import com.wordblaster.game.GameSettings;
 import com.wordblaster.game.Word;

@@ -1,6 +1,6 @@
 package com.wordblaster.renderer;
 
-import com.wordblaster.game.gametypes.Game;
+import com.wordblaster.game.Game;
 import com.wordblaster.game.Word;
 
 import javax.swing.*;
@@ -11,7 +11,7 @@ import java.awt.image.BufferStrategy;
 
 public class GameRenderer implements Runnable {
 
-    private int width ;
+    private int width;
     private int height;
 
     private JFrame frame;
@@ -59,10 +59,10 @@ public class GameRenderer implements Runnable {
         public void keyReleased(KeyEvent keyEvent) {}
     }
 
-    public GameRenderer(Game game, int width, int height) {
+    public GameRenderer(Game game, DisplaySettings displaySettings) {
         this.game = game;
-        this.width = width;
-        this.height = height;
+        this.width = displaySettings.getResolution_w();
+        this.height = displaySettings.getResolution_h();
         this.maxFaultsStr = Integer.toString(game.getMaxMisses());
 
         frame = new JFrame("Word Blaster");
