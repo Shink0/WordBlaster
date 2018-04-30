@@ -50,6 +50,7 @@ public class SettingsReader {
                 }
             }
         }
+        sc.close();
         return displaySettings;
     }
 
@@ -78,6 +79,7 @@ public class SettingsReader {
                 }
             }
         }
+        sc.close();
         return gameSettings;
     }
 
