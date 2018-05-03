@@ -3,7 +3,7 @@ package com.wordblaster.menu;
 import com.wordblaster.game.Game;
 import com.wordblaster.game.GameSettings;
 import com.wordblaster.game.gametypes.StandardGame;
-import com.wordblaster.persistance.SettingsReader;
+import com.wordblaster.persistence.SettingsReader;
 import com.wordblaster.renderer.DisplaySettings;
 import com.wordblaster.renderer.GameRenderer;
 

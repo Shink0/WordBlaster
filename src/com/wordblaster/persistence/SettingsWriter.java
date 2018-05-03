@@ -1,4 +1,4 @@
-package com.wordblaster.persistance;
+package com.wordblaster.persistence;
 
 import com.wordblaster.renderer.DisplaySettings;
 
